@@ -21,6 +21,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.ptps.microservices.taxamountDataloadService.util.environment.ResponseMessage;
 
+import io.swagger.annotations.ApiOperation;
+
 @RestController
 public class PaymentSettlementController {
 
@@ -30,11 +32,13 @@ public class PaymentSettlementController {
 	private TaxPaymentOrderRepository repository;
 
 	@GetMapping("/")
+	@ApiOperation(value = "Health Check")
 	public String imHealthy() {
 		return "{healthy:true}";
 	}
 
 	@GetMapping("/payment-settlement/{id}")
+	@ApiOperation(value = "Retrieve Settlement info for a payment order")
 	public TaxPaymentOrder retrievePaymentOrder(@PathVariable long id) {
 
 		Optional<TaxPaymentOrder> taxPaymentOrder = repository.findById(id);
@@ -44,6 +48,7 @@ public class PaymentSettlementController {
 	}
 	
 	@GetMapping("/payment-settlement/dues")
+	@ApiOperation(value = "Retrieve Settlement info for all due payment orders")
 	public List<TaxPaymentOrder> fetchDuePayment() {
 
 		List<TaxPaymentOrder> duePaymentOrders = repository.findByDecision(false);
@@ -53,6 +58,7 @@ public class PaymentSettlementController {
 	}
 
 	@PutMapping("/payment-settlement/{id}")
+	@ApiOperation(value = "Update Settlement info for a due payment order")
 	public ResponseEntity<TaxPaymentOrder> updateTaxPaymentOrder(@PathVariable long id, @RequestBody TaxPaymentOrder order){
 
 		String message;			
