@@ -11,7 +11,7 @@ steps:
   args:
   - 'build'
   - '-t'
-  - 'gcr.io/$PROJECT_ID/ptps-payment-settlement:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/ptps-payment-settlement:0.0.1-RELEASE'
   - '.'
 
 # This step pushes the image to Container Registry
@@ -21,7 +21,7 @@ steps:
   id: Push
   args:
   - 'push'
-  - 'gcr.io/$PROJECT_ID/ptps-payment-settlement:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/ptps-payment-settlement:0.0.1-RELEASE'
 
 # This step deploys the new version of our container image
 # in the hello-cloudbuild Kubernetes Engine cluster.
