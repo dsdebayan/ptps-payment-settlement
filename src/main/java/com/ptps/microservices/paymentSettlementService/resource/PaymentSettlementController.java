@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,16 +39,37 @@ public class PaymentSettlementController {
 		return "{healthy:true}";
 	}
 
+	/*
+	 * @GetMapping("/payment-settlement/{id}")
+	 * 
+	 * @ApiOperation(value = "Retrieve Settlement info for a payment order") public
+	 * TaxPaymentOrder retrievePaymentOrder(@PathVariable long id) {
+	 * 
+	 * Optional<TaxPaymentOrder> taxPaymentOrder = repository.findById(id);
+	 * 
+	 * LOGGER.info("{} {} {}", taxPaymentOrder.get()); return taxPaymentOrder.get();
+	 * }
+	 */
+
 	@GetMapping("/payment-settlement/{id}")
 	@ApiOperation(value = "Retrieve Settlement info for a payment order")
-	public TaxPaymentOrder retrievePaymentOrder(@PathVariable long id) {
+	public TaxPaymentOrder retrievePaymentOrderById(@PathVariable long id) {
 
-		Optional<TaxPaymentOrder> taxPaymentOrder = repository.findById(id);
+		Predicate<TaxPaymentOrder> pred = tpo -> (tpo.getId() == id); //1. Predicate functional interface, 2. lambda expression		
+		List<TaxPaymentOrder> tpos = repository    //3. optional class
+				.findAll()
+				.stream()
+				.filter(pred)
+				.collect(Collectors.toList());
+		
+		
+		Optional<TaxPaymentOrder> tpo =	tpos
+				.stream()
+				.findFirst();; //4. stream api,  5. Collectors class	
 
-		LOGGER.info("{} {} {}", taxPaymentOrder.get());
-		return taxPaymentOrder.get();
+		return tpo.orElseThrow(RuntimeException :: new); //6. Method reference
 	}
-	
+
 	@GetMapping("/payment-settlement/dues")
 	@ApiOperation(value = "Retrieve Settlement info for all due payment orders")
 	public List<TaxPaymentOrder> fetchDuePayment() {
@@ -71,7 +94,7 @@ public class PaymentSettlementController {
 				taxPaymentOrder.setTotalAmountPaid(taxPaymentOrder.getAmountToBePaid() + 50);
 			}
 		}
-		
+
 		repository.save(taxPaymentOrder);
 
 		message = "Payment Settlement done successfully. Tax Payment Order : " + taxPaymentOrder.getId();
