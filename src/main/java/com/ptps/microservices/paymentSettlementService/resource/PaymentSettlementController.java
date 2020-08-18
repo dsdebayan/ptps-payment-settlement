@@ -55,17 +55,18 @@ public class PaymentSettlementController {
 	@ApiOperation(value = "Retrieve Settlement info for a payment order")
 	public TaxPaymentOrder retrievePaymentOrderById(@PathVariable long id) {
 
-		Predicate<TaxPaymentOrder> pred = tpo -> (tpo.getId() == id); //1. Predicate functional interface, 2. lambda expression		
-		List<TaxPaymentOrder> tpos = repository    //3. optional class
+		Predicate<TaxPaymentOrder> pred = tpo -> (tpo.getId() == id); //1. Predicate functional interface, 2. lambda expression
+		
+		List<TaxPaymentOrder> tpos = repository    
 				.findAll()
 				.stream()
-				.filter(pred)
-				.collect(Collectors.toList());
+				.filter(pred)  //3. stream api
+				.collect(Collectors.toList()); //4. Collectors class	
 		
 		
 		Optional<TaxPaymentOrder> tpo =	tpos
 				.stream()
-				.findFirst();; //4. stream api,  5. Collectors class	
+				.findFirst(); //5. optional class
 
 		return tpo.orElseThrow(RuntimeException :: new); //6. Method reference
 	}
